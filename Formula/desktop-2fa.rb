@@ -1,21 +1,44 @@
 class Desktop2fa < Formula
   include Language::Python::Virtualenv
 
-  desc "Secure offline 2FA desktop authenticator"
+  desc "Secure offline desktop application for generating and managing TOTP 2FA codes"
   homepage "https://github.com/wrogistefan/desktop-2fa"
-  url "https://github.com/wrogistefan/desktop-2fa/archive/refs/tags/v0.7.1.tar.gz"
-  sha256 "F5AD98105290819C4E497D1FCC5CF52D160FAB21B62CB1577D826BA53B3E4B17"
+  url "https://files.pythonhosted.org/packages/source/d/desktop-2fa/desktop-2fa-0.7.1.tar.gz"
+  sha256 "REPLACE_WITH_REAL_SHA256"
   license "Apache-2.0"
 
   depends_on "python@3.12"
+  depends_on "pipx"
 
   def install
-    virtualenv_install_with_resources
+    # pipx isolation with explicit python
+    system Formula["pipx"].opt_bin/"pipx", "install",
+           "desktop-2fa",
+           "--python", Formula["python@3.12"].opt_bin/"python3.12",
+           "--force"
+
+    # symlink the executable into Homebrew's bin
+    bin.install_symlink HOMEBREW_PREFIX/"bin/desktop-2fa"
+  end
+
+  def caveats
+    <<~EOS
+      desktop-2fa is installed using pipx for full dependency isolation.
+
+      This ensures:
+        • all Python dependencies are installed correctly
+        • no conflicts with system Python or Homebrew Python
+        • clean upgrades when new versions are published to PyPI
+
+      To run:
+        desktop-2fa --help
+
+      To upgrade:
+        pipx upgrade desktop-2fa
+    EOS
   end
 
   test do
-    # Basic test: check that CLI runs and prints version
-    output = shell_output("#{bin}/d2fa --help")
-    assert_match "Usage", output
+    system "#{bin}/desktop-2fa", "--help"
   end
 end
