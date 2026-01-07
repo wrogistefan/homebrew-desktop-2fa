@@ -1,6 +1,4 @@
 class Desktop2fa < Formula
-  include Language::Python::Virtualenv
-
   desc "Secure TOTP authenticator for desktop with encrypted vault"
   homepage "https://github.com/wrogistefan/desktop-2fa"
   url "https://files.pythonhosted.org/packages/source/d/desktop_2fa/desktop_2fa-0.7.1.tar.gz"
@@ -11,11 +9,7 @@ class Desktop2fa < Formula
   depends_on "pipx"
 
   def install
-    # Install desktop-2fa into an isolated pipx environment
     system "pipx", "install", "desktop-2fa==0.7.1"
-
-    # Create a wrapper script so 'd2fa' is available in PATH
-    bin.install_symlink HOMEBREW_PREFIX/"bin/pipx" => "pipx"
     (bin/"d2fa").write <<~EOS
       #!/bin/bash
       exec pipx run desktop-2fa "$@"
