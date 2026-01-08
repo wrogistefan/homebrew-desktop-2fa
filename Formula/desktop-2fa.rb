@@ -8,32 +8,30 @@ class Desktop2fa < Formula
   depends_on "python@3.12"
 
   def install
-    venv_dir = libexec/"venv"
+    python = Formula["python@3.12"].opt_libexec/"bin/python3"
+    venv = libexec/"venv"
 
-    # Install virtualenv into Homebrew Python
-    system Formula["python@3.12"].opt_bin/"python3", "-m", "pip", "install", "--upgrade", "pip", "setuptools", "wheel", "virtualenv"
+    # Create venv using the correct python path
+    system python, "-m", "venv", venv
 
-    # Create venv using virtualenv (NOT python -m venv)
-    system Formula["python@3.12"].opt_bin/"python3", "-m", "virtualenv", venv_dir
+    # Install desktop-2fa inside venv
+    system venv/"bin/pip", "install", "--upgrade", "pip", "setuptools", "wheel"
+    system venv/"bin/pip", "install", "desktop-2fa==0.7.2"
 
-    # Install desktop-2fa inside the venv
-    system venv_dir/"bin/pip", "install", "desktop-2fa==0.7.2"
-
-    # Create wrappers
+    # Wrappers
     (bin/"d2fa").write <<~EOS
       #!/bin/bash
-      exec "#{venv_dir}/bin/desktop-2fa" "$@"
+      exec "#{venv}/bin/desktop-2fa" "$@"
     EOS
-    chmod 0755, bin/"d2fa"
 
     (bin/"desktop-2fa").write <<~EOS
       #!/bin/bash
-      exec "#{venv_dir}/bin/desktop-2fa" "$@"
+      exec "#{venv}/bin/desktop-2fa" "$@"
     EOS
-    chmod 0755, bin/"desktop-2fa"
   end
 
   test do
     assert_match "Desktop-2FA v0.7.2", shell_output("#{bin}/d2fa --version")
   end
 end
+
