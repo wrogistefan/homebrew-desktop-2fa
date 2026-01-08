@@ -9,14 +9,17 @@ class Desktop2fa < Formula
 
   def install
     venv_dir = libexec/"venv"
-    system Formula["python@3.12"].opt_bin/"python3", "-m", "venv", venv_dir
 
-    # pip w venv
-    pip = venv_dir/"bin/pip"
-    system pip, "install", "--upgrade", "pip", "setuptools", "wheel"
-    system pip, "install", "desktop-2fa==0.7.2"
+    # Install virtualenv into Homebrew Python
+    system Formula["python@3.12"].opt_bin/"python3", "-m", "pip", "install", "--upgrade", "pip", "setuptools", "wheel", "virtualenv"
 
-    # wrapper
+    # Create venv using virtualenv (NOT python -m venv)
+    system Formula["python@3.12"].opt_bin/"python3", "-m", "virtualenv", venv_dir
+
+    # Install desktop-2fa inside the venv
+    system venv_dir/"bin/pip", "install", "desktop-2fa==0.7.2"
+
+    # Create wrappers
     (bin/"d2fa").write <<~EOS
       #!/bin/bash
       exec "#{venv_dir}/bin/desktop-2fa" "$@"
