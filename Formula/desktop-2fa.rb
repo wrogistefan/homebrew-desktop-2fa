@@ -1,8 +1,8 @@
 class Desktop2fa < Formula
   desc "Secure offline TOTP desktop authenticator"
   homepage "https://github.com/wrogistefan/desktop-2fa"
-  url "https://files.pythonhosted.org/packages/52/d0/8c0e55b606fa20c41c95284c282f292a53e63f8e6c43040ca66ecac932fd/desktop_2fa-0.8.0.tar.gz"
-  sha256 "fa9c6a2a242c98ed001d2e53a7cdcb7f2536a2b384314e5407c6e80fe69c5afc"
+  url "https://files.pythonhosted.org/packages/c5/25/194d538ae07fd42c65f882b4b53decafbfa9fd4cae594a6a16c7578495b1/desktop_2fa-0.8.1.tar.gz"
+  sha256 "347b3eaf9d213160a9fd25cfa75acebaf7751048dea98c657eba2fb1eba8caa2"
   license "Apache-2.0"
 
   depends_on "python@3.12"
@@ -16,7 +16,7 @@ class Desktop2fa < Formula
 
     # Install desktop-2fa inside venv
     system venv/"bin/pip", "install", "--upgrade", "pip", "setuptools", "wheel"
-    system venv/"bin/pip", "install", "desktop-2fa==0.8.0"
+    system venv/"bin/pip", "install", "desktop-2fa==0.8.1"
 
     # Wrappers
     (bin/"d2fa").write <<~EOS
@@ -31,7 +31,7 @@ class Desktop2fa < Formula
   end
 
   test do
-    assert_match "Desktop-2FA v0.8.0")
+    assert_match "Desktop-2FA v0.8.1")
   end
 end
 
